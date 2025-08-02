@@ -54,7 +54,7 @@ JWT_SECRET=your_jwt_secret
 Go inside the `Password-Manager` directory and run these commands:
 Create a `.env` file inside the `Password-Manager` folder:
 
-```
+```bash
 VITE_BASE_URL=your_server-url
 ```
 
