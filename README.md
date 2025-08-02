@@ -51,13 +51,21 @@ JWT_SECRET=your_jwt_secret
 ### Frontend Setup
 
 
-Go inside the `Pass-Manager-Frontend` directory and run these commands:
+Go inside the `Password-Manager` directory and run these commands:
+Create a `.env` file inside the `Password-Manager` folder:
 
+```
+VITE_BASE_URL=your_server-url
+```
+
+Then run these commands inside the `Password-Manager` directory:
 
 ```bash
 npm install
 npm start
 ```
+
+Now Your Frontend Started go to the browser and type `http://localhost:5173`.
 
 ---
 
