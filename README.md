@@ -85,7 +85,7 @@ npm start
 
 ## 📷 Screenshots
 
-![Home Page](https://raw.githubusercontent.com/MuhammadSaim0604/Password-Manager/refs/heads/main/public/SS.png "Home Page")
+![Home Page](https://raw.githubusercontent.com/MuhammadSaim0604/Password-Manager/refs/heads/main/public/BB.png "Home Page")
 
 ---
 
