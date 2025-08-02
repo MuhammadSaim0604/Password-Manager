@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
+import { ToastContainer, toast } from 'react-toastify';
 
 const AuthContext = createContext();
 
@@ -27,7 +28,7 @@ export const AuthProvider = ({ children }) => {
           }
 
           axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-          
+
           // Verify token with backend
           const res = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/auth/verify`);
           setUser(res.data.user);
@@ -49,15 +50,18 @@ export const AuthProvider = ({ children }) => {
       setLoading(true);
       setError(null);
       const res = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/login`, { email, password });
-      
-      localStorage.setItem('token', res.data.token);
-      setToken(res.data.token);
-      setUser(res.data.user);
-      axios.defaults.headers.common['Authorization'] = `Bearer ${res.data.token}`;
-      
-      return { success: true };
+
+      if (res.status === 200) {
+        localStorage.setItem('token', res.data.token);
+        setToken(res.data.token);
+        setUser(res.data.user);
+        axios.defaults.headers.common['Authorization'] = `Bearer ${res.data.token}`;
+
+        return { success: true };
+      } else {
+        return { success: false, error: res.data.message || 'Login failed'}
+      }
     } catch (err) {
-      console.error('Login failed:', err.response?.data?.message || err.message);
       setError(err.response?.data?.message || 'Login failed. Please try again.');
       return { success: false, error: err.response?.data?.message };
     } finally {
@@ -65,31 +69,35 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-// Update the signup function in AuthContext.jsx
-const signup = async (email, password, name) => {
-  try {
-    setLoading(true);
-    setError(null);
-    const res = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/signup`, { 
-      email, 
-      password,
-      name // Include name in the signup request
-    });
-    
-    localStorage.setItem('token', res.data.token);
-    setToken(res.data.token);
-    setUser(res.data.user);
-    axios.defaults.headers.common['Authorization'] = `Bearer ${res.data.token}`;
-    
-    return { success: true };
-  } catch (err) {
-    console.error('Signup failed:', err.response?.data?.message || err.message);
-    setError(err.response?.data?.message || 'Signup failed. Please try again.');
-    return { success: false, error: err.response?.data?.message };
-  } finally {
-    setLoading(false);
-  }
-};
+  // Update the signup function in AuthContext.jsx
+  const signup = async (email, password, name) => {
+    try {
+      setLoading(true);
+      setError(null);
+      const res = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/signup`, {
+        email,
+        password,
+        name // Include name in the signup request
+      });
+
+      if (res.status === 200) {
+        localStorage.setItem('token', res.data.token);
+        setToken(res.data.token);
+        setUser(res.data.user);
+        axios.defaults.headers.common['Authorization'] = `Bearer ${res.data.token}`;
+
+        return { success: true };
+      } else {
+        return { success: false, error: res.data.message || 'Signup failed'}
+      }
+    } catch (err) {
+      console.error('Signup failed:', err.response?.data?.message || err.message);
+      setError(err.response?.data?.message || 'Signup failed. Please try again.');
+      return { success: false, error: err.response?.data?.message };
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const logout = () => {
     localStorage.removeItem('token');
@@ -113,7 +121,7 @@ const signup = async (email, password, name) => {
 
   return (
     <AuthContext.Provider value={value}>
-      {!loading && children}
+      {children}
     </AuthContext.Provider>
   );
 };
